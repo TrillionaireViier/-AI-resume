@@ -14,6 +14,31 @@ const InputField = ({ label, value, onChange, placeholder, type = "text" }) => (
   </div>
 );
 
+const PhotoUploadField = ({ label, onPhotoSelect }) => {
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        onPhotoSelect(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  return (
+    <div className="mb-4 md:col-span-2">
+      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">{label}</label>
+      <input 
+        type="file" 
+        accept="image/*"
+        onChange={handleFileChange}
+        className="w-full text-sm text-slate-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-indigo-500/20 file:text-indigo-300 hover:file:bg-indigo-500/30 file:transition-all cursor-pointer border border-slate-700/50 bg-slate-800/30 rounded-lg p-1.5"
+      />
+    </div>
+  );
+};
+
 const TextAreaField = ({ label, value, onChange, placeholder, onEnhance, isEnhancing }) => (
   <div className="mb-6 relative group">
     <div className="flex justify-between items-end mb-1.5 ml-1">
@@ -71,6 +96,7 @@ export default function ResumeForm({ data, updateData }) {
       <div className="mb-10">
         <SectionTitle icon={User} title="Personal Details" />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
+          <PhotoUploadField label="Profile Picture" onPhotoSelect={(photoBase64) => updateData({...data, photo: photoBase64})} />
           <InputField label="Full Name" value={data.name} onChange={e => updateData({...data, name: e.target.value})} placeholder="e.g. John Doe" />
           <InputField label="Job Title" value={data.title} onChange={e => updateData({...data, title: e.target.value})} placeholder="e.g. Senior Software Engineer" />
           <InputField label="Email Address" type="email" value={data.email} onChange={e => updateData({...data, email: e.target.value})} placeholder="john@example.com" />
