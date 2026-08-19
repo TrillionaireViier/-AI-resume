@@ -65,7 +65,7 @@ export default function ResumeForm({ data, updateData }) {
   );
 
   return (
-    <div className="h-full overflow-y-auto pr-4 custom-scrollbar pb-12">
+    <div className="lg:h-full lg:overflow-y-auto pr-2 lg:pr-4 custom-scrollbar pb-12">
       
       {/* Personal Info */}
       <div className="mb-10">
