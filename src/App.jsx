@@ -54,9 +54,9 @@ function App() {
         </button>
       </header>
 
-      <main className="flex-1 flex overflow-hidden">
+      <main className="flex-1 flex flex-col lg:flex-row overflow-hidden">
         {/* Left pane: Form (Dark Mode) */}
-        <div className="w-full lg:w-[45%] p-6 bg-slate-900 border-r border-white/10 overflow-hidden relative shadow-2xl z-10">
+        <div className="w-full lg:w-[45%] h-[40%] lg:h-full p-6 bg-slate-900 border-r border-white/10 overflow-hidden relative shadow-2xl z-10">
           {/* Subtle gradient orb for background aesthetic */}
           <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
             <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-indigo-500/10 blur-[100px]"></div>
@@ -68,7 +68,7 @@ function App() {
         </div>
         
         {/* Right pane: Preview (Light Mode / Paper) */}
-        <div className="hidden lg:flex w-[55%] p-8 bg-slate-100 overflow-auto justify-center items-start shadow-inner relative custom-scrollbar">
+        <div className="w-full lg:w-[55%] h-[60%] lg:h-full p-4 lg:p-8 bg-slate-100 overflow-auto flex justify-center items-start shadow-inner relative custom-scrollbar">
           {/* Decorative pattern */}
           <div className="absolute inset-0 opacity-[0.03] bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none"></div>
           
