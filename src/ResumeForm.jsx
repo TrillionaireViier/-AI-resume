@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Briefcase, GraduationCap, Code, Wand2, CheckCircle2, Loader2 } from 'lucide-react';
+import { User, Briefcase, GraduationCap, Code, Wand2, CheckCircle2, Loader2, Sparkles } from 'lucide-react';
 
 const InputField = ({ label, value, onChange, placeholder, type = "text" }) => (
   <div className="mb-4">
