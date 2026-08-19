@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import html2pdf from 'html2pdf.js';
 import { FileDown, Sparkles } from 'lucide-react';
 import ResumeForm from './ResumeForm';
@@ -20,6 +20,29 @@ function App() {
   });
 
   const printRef = useRef();
+  const containerRef = useRef();
+  const [previewScale, setPreviewScale] = useState(1);
+
+  useEffect(() => {
+    const updateScale = () => {
+      if (containerRef.current) {
+        const containerWidth = containerRef.current.clientWidth;
+        // 8.5 inches is exactly 816 pixels at 96 DPI
+        const resumeWidth = 816;
+        const padding = 32; // 16px padding on each side
+        
+        if (containerWidth < resumeWidth + padding) {
+          setPreviewScale((containerWidth - padding) / resumeWidth);
+        } else {
+          setPreviewScale(1);
+        }
+      }
+    };
+
+    updateScale();
+    window.addEventListener('resize', updateScale);
+    return () => window.removeEventListener('resize', updateScale);
+  }, []);
 
   const handleDownloadPdf = () => {
     const element = printRef.current;
@@ -68,11 +91,11 @@ function App() {
         </div>
         
         {/* Right pane: Preview (Light Mode / Paper) */}
-        <div className="w-full lg:w-[55%] p-4 lg:p-8 bg-slate-100 flex justify-center items-start shadow-inner relative overflow-x-auto lg:overflow-y-auto custom-scrollbar">
+        <div ref={containerRef} className="w-full lg:w-[55%] p-4 lg:p-8 bg-slate-100 flex justify-center items-start shadow-inner relative overflow-x-hidden lg:overflow-y-auto custom-scrollbar">
           {/* Decorative pattern */}
           <div className="absolute inset-0 opacity-[0.03] bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none"></div>
           
-          <div className="shadow-2xl hover:shadow-3xl transition-shadow duration-500 bg-white origin-top" style={{ transform: 'scale(1)', transformOrigin: 'top center' }}>
+          <div className="shadow-2xl hover:shadow-3xl transition-shadow duration-500 bg-white origin-top" style={{ transform: `scale(${previewScale})`, transformOrigin: 'top center', marginBottom: `calc(${(1 - previewScale) * -11}in)` }}>
             <ResumePreview data={resumeData} ref={printRef} />
           </div>
         </div>
