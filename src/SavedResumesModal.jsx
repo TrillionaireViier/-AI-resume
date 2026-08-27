@@ -62,6 +62,16 @@ export default function SavedResumesModal({ isOpen, onClose, currentResumeData, 
     }
   };
 
+  const handleExportJson = () => {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(savedResumes));
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", "resume_history_backup.json");
+    document.body.appendChild(downloadAnchorNode);
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -121,7 +131,18 @@ export default function SavedResumesModal({ isOpen, onClose, currentResumeData, 
 
           {/* List of Saved Resumes */}
           <div>
-            <h4 className="text-sm font-bold text-slate-300 uppercase tracking-wider mb-3">Saved History</h4>
+            <div className="flex justify-between items-center mb-3">
+              <h4 className="text-sm font-bold text-slate-300 uppercase tracking-wider">Saved History</h4>
+              {savedResumes.length > 0 && (
+                <button 
+                  onClick={handleExportJson}
+                  className="flex items-center gap-1.5 text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg transition-colors border border-slate-700 hover:border-slate-600"
+                  title="Download Backup"
+                >
+                  <Download size={14} /> Export Backup
+                </button>
+              )}
+            </div>
             {savedResumes.length === 0 ? (
               <div className="text-center p-8 bg-slate-800/20 border border-slate-700/30 rounded-xl text-slate-500">
                 <FolderHeart size={32} className="mx-auto mb-3 opacity-50" />
