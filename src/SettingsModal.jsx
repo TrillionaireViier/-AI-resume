@@ -16,7 +16,7 @@ export default function SettingsModal({ isOpen, onClose, apiKey, setApiKey }) {
 
   const handleSave = () => {
     setApiKey(localKey);
-    localStorage.setItem('gemini_api_key', localKey);
+    localStorage.setItem('openrouter_api_key', localKey);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
@@ -40,18 +40,18 @@ export default function SettingsModal({ isOpen, onClose, apiKey, setApiKey }) {
         <div className="p-6">
           <div className="mb-4">
             <label className="block text-sm font-semibold text-slate-300 mb-2 flex items-center gap-2">
-              <Key size={16} className="text-indigo-400" /> Google Gemini API Key
+              <Key size={16} className="text-indigo-400" /> OpenRouter API Key
             </label>
             <input
               type="password"
               value={localKey}
               onChange={(e) => setLocalKey(e.target.value)}
               className="w-full bg-slate-800 border border-slate-700 text-slate-200 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-all placeholder:text-slate-600 font-mono"
-              placeholder="AIzaSy..."
+              placeholder="sk-or-v1-..."
             />
             <p className="text-slate-500 text-xs mt-2 leading-relaxed">
-              To use the AI generation features, you need a free Google Gemini API key. Your key is saved locally in your browser and is never sent to our servers.
-              <br/><a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noreferrer" className="text-indigo-400 hover:underline">Get a free key here</a>.
+              To use the AI generation features, you need an OpenRouter API key. Your key is saved locally in your browser and is never sent to our servers.
+              <br/><a href="https://openrouter.ai/keys" target="_blank" rel="noreferrer" className="text-indigo-400 hover:underline">Get your API key here</a>.
             </p>
           </div>
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Wand2, Check, Clock, AlertCircle } from 'lucide-react';
-import { generateResumeContent } from './lib/gemini';
+import { generateResumeContent } from './lib/ai';
 
 export default function AiGeneratorModal({ isOpen, onClose, fieldType, currentText, onApply, apiKey }) {
   const [inputText, setInputText] = useState('');
@@ -20,7 +20,7 @@ export default function AiGeneratorModal({ isOpen, onClose, fieldType, currentTe
 
   const handleGenerate = async () => {
     if (!apiKey) {
-      setError('Please set your Gemini API Key in Settings first.');
+      setError('Please set your OpenRouter API Key in Settings first.');
       return;
     }
     if (!inputText.trim()) {

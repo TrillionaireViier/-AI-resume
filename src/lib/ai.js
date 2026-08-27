@@ -3,7 +3,7 @@ export async function generateResumeContent(apiKey, prompt, contextType) {
     throw new Error('API Key is missing');
   }
 
-  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+  const endpoint = "https://openrouter.ai/api/v1/chat/completions";
 
   let systemInstruction = "";
   if (contextType === 'summary') {
@@ -13,21 +13,21 @@ export async function generateResumeContent(apiKey, prompt, contextType) {
   }
 
   const requestBody = {
-    contents: [{
-      parts: [{ text: prompt }]
-    }],
-    systemInstruction: {
-      parts: [{ text: systemInstruction }]
-    },
-    generationConfig: {
-      temperature: 0.7,
-      maxOutputTokens: 500,
-    }
+    model: "qwen/qwen-2.5-7b-instruct",
+    messages: [
+      { role: "system", content: systemInstruction },
+      { role: "user", content: prompt }
+    ],
+    temperature: 0.7,
+    max_tokens: 500,
   };
 
   const response = await fetch(endpoint, {
     method: 'POST',
     headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'HTTP-Referer': window.location.origin, // required by OpenRouter
+      'X-Title': 'AI Resume Builder', // optional, helps OpenRouter dashboard
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(requestBody)
@@ -39,5 +39,5 @@ export async function generateResumeContent(apiKey, prompt, contextType) {
   }
 
   const data = await response.json();
-  return data.candidates[0].content.parts[0].text.trim();
+  return data.choices[0].message.content.trim();
 }

@@ -31,7 +31,7 @@ function App() {
   const [aiModalState, setAiModalState] = useState({ isOpen: false, fieldType: null, fieldId: null, currentText: '' });
 
   useEffect(() => {
-    const savedKey = localStorage.getItem('gemini_api_key');
+    const savedKey = localStorage.getItem('openrouter_api_key');
     if (savedKey) setApiKey(savedKey);
   }, []);
 
