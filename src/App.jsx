@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useReactToPrint } from 'react-to-print';
-import { FileDown, Sparkles, Settings } from 'lucide-react';
+import { FileDown, Sparkles, Settings, FolderHeart } from 'lucide-react';
 import ResumeForm from './ResumeForm';
 import ResumePreview from './ResumePreview';
 import SettingsModal from './SettingsModal';
 import AiGeneratorModal from './AiGeneratorModal';
+import SavedResumesModal from './SavedResumesModal';
 
 function App() {
   const [resumeData, setResumeData] = useState({
@@ -23,9 +24,10 @@ function App() {
   const containerRef = useRef();
   const [previewScale, setPreviewScale] = useState(1);
   
-  // Settings & AI State
+  // Settings, AI, & History State
   const [apiKey, setApiKey] = useState('');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isSavedResumesOpen, setIsSavedResumesOpen] = useState(false);
   const [aiModalState, setAiModalState] = useState({ isOpen: false, fieldType: null, fieldId: null, currentText: '' });
 
   useEffect(() => {
@@ -89,6 +91,14 @@ function App() {
         </div>
         <div className="flex items-center gap-3">
           <button 
+            onClick={() => setIsSavedResumesOpen(true)}
+            className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white px-3 py-2 rounded-lg font-medium transition-all text-sm border border-slate-700/50"
+            title="Saved Resumes"
+          >
+            <FolderHeart className="w-4 h-4 text-indigo-400" />
+            <span className="hidden sm:inline">My Resumes</span>
+          </button>
+          <button 
             onClick={() => setIsSettingsOpen(true)}
             className="p-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors border border-transparent hover:border-slate-700"
             title="Settings"
@@ -143,6 +153,13 @@ function App() {
         currentText={aiModalState.currentText}
         onApply={handleApplyAiResult}
         apiKey={apiKey}
+      />
+      
+      <SavedResumesModal
+        isOpen={isSavedResumesOpen}
+        onClose={() => setIsSavedResumesOpen(false)}
+        currentResumeData={resumeData}
+        onLoadResume={setResumeData}
       />
     </div>
   );
