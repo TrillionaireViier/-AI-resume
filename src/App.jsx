@@ -1,8 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useReactToPrint } from 'react-to-print';
-import { FileDown, Sparkles } from 'lucide-react';
+import { FileDown, Sparkles, Settings } from 'lucide-react';
 import ResumeForm from './ResumeForm';
 import ResumePreview from './ResumePreview';
+import SettingsModal from './SettingsModal';
+import AiGeneratorModal from './AiGeneratorModal';
 
 function App() {
   const [resumeData, setResumeData] = useState({
@@ -20,6 +22,33 @@ function App() {
   const printRef = useRef();
   const containerRef = useRef();
   const [previewScale, setPreviewScale] = useState(1);
+  
+  // Settings & AI State
+  const [apiKey, setApiKey] = useState('');
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [aiModalState, setAiModalState] = useState({ isOpen: false, fieldType: null, fieldId: null, currentText: '' });
+
+  useEffect(() => {
+    const savedKey = localStorage.getItem('gemini_api_key');
+    if (savedKey) setApiKey(savedKey);
+  }, []);
+
+  const openAiModal = (fieldType, fieldId, currentText) => {
+    setAiModalState({ isOpen: true, fieldType, fieldId, currentText });
+  };
+
+  const handleApplyAiResult = (result) => {
+    if (aiModalState.fieldType === 'summary') {
+      setResumeData(prev => ({ ...prev, summary: result }));
+    } else if (aiModalState.fieldType === 'experience') {
+      setResumeData(prev => {
+        const updatedList = prev.experienceList.map(exp => 
+          exp.id === aiModalState.fieldId ? { ...exp, experience: result } : exp
+        );
+        return { ...prev, experienceList: updatedList };
+      });
+    }
+  };
 
   useEffect(() => {
     const updateScale = () => {
@@ -58,12 +87,21 @@ function App() {
             AI Resume Builder
           </span>
         </div>
-        <button 
-          onClick={handleDownloadPdf}
-          className="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-medium transition-all shadow-lg shadow-indigo-500/20 flex items-center gap-2 text-sm border border-indigo-500/50 hover:scale-105 active:scale-95"
-        >
-          <FileDown className="w-4 h-4" /> Export to PDF
-        </button>
+        <div className="flex items-center gap-3">
+          <button 
+            onClick={() => setIsSettingsOpen(true)}
+            className="p-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors border border-transparent hover:border-slate-700"
+            title="Settings"
+          >
+            <Settings className="w-5 h-5" />
+          </button>
+          <button 
+            onClick={handleDownloadPdf}
+            className="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-medium transition-all shadow-lg shadow-indigo-500/20 flex items-center gap-2 text-sm border border-indigo-500/50 hover:scale-105 active:scale-95"
+          >
+            <FileDown className="w-4 h-4" /> Export to PDF
+          </button>
+        </div>
       </header>
 
       <main className="flex-1 flex flex-col lg:flex-row lg:overflow-hidden">
@@ -75,7 +113,7 @@ function App() {
           </div>
           
           <div className="relative z-10 h-full">
-            <ResumeForm data={resumeData} updateData={setResumeData} />
+            <ResumeForm data={resumeData} updateData={setResumeData} onOpenAiModal={openAiModal} />
           </div>
         </div>
         
@@ -89,6 +127,23 @@ function App() {
           </div>
         </div>
       </main>
+
+      {/* Modals */}
+      <SettingsModal 
+        isOpen={isSettingsOpen} 
+        onClose={() => setIsSettingsOpen(false)} 
+        apiKey={apiKey} 
+        setApiKey={setApiKey} 
+      />
+      
+      <AiGeneratorModal 
+        isOpen={aiModalState.isOpen}
+        onClose={() => setAiModalState({ ...aiModalState, isOpen: false })}
+        fieldType={aiModalState.fieldType}
+        currentText={aiModalState.currentText}
+        onApply={handleApplyAiResult}
+        apiKey={apiKey}
+      />
     </div>
   );
 }

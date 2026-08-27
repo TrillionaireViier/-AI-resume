@@ -45,17 +45,16 @@ const PhotoUploadField = ({ label, onPhotoSelect }) => {
   );
 };
 
-const TextAreaField = ({ label, value, onChange, placeholder, onEnhance, isEnhancing }) => (
+const TextAreaField = ({ label, value, onChange, placeholder, onEnhance }) => (
   <div className="mb-6 relative group">
     <div className="flex justify-between items-end mb-1.5 ml-1">
       <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider">{label}</label>
       <button 
         onClick={onEnhance} 
-        disabled={isEnhancing}
-        className="flex items-center gap-1.5 text-xs bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2.5 py-1 rounded-full hover:bg-indigo-500/20 hover:text-indigo-300 hover:border-indigo-500/40 transition-all disabled:opacity-50"
+        className="flex items-center gap-1.5 text-xs bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2.5 py-1 rounded-full hover:bg-indigo-500/20 hover:text-indigo-300 hover:border-indigo-500/40 transition-all"
       >
-        {isEnhancing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Wand2 className="w-3.5 h-3.5" />}
-        {isEnhancing ? 'Enhancing...' : 'AI Enhance'}
+        <Wand2 className="w-3.5 h-3.5" />
+        AI Enhance
       </button>
     </div>
     <textarea 
@@ -68,30 +67,9 @@ const TextAreaField = ({ label, value, onChange, placeholder, onEnhance, isEnhan
   </div>
 );
 
-export default function ResumeForm({ data, updateData }) {
-  const [enhancingField, setEnhancingField] = useState(null);
-  
-  const handleAiEnhance = (field) => {
-    setEnhancingField(field);
-    
-    // Simulate API call for AI enhancement
-    setTimeout(() => {
-      const enhancements = {
-        summary: "Dynamic and results-oriented professional with a proven track record of leveraging innovative technologies to drive business growth. Adept at cross-functional collaboration and delivering high-impact solutions in fast-paced environments.",
-        experience: "• Spearheaded the development of a scalable cloud architecture, reducing operational costs by 30%.\n• Managed a cross-functional team of 10+ engineers to deliver a flagship product 2 months ahead of schedule.\n• Implemented robust CI/CD pipelines that accelerated deployment times by 40% while maintaining 99.9% uptime."
-      };
-      
-      if (field === 'summary') {
-        updateData({ ...data, summary: enhancements.summary });
-      } else if (field.startsWith('experience-')) {
-        const id = parseInt(field.split('-')[1]);
-        const updatedList = data.experienceList.map(exp => 
-          exp.id === id ? { ...exp, experience: enhancements.experience } : exp
-        );
-        updateData({ ...data, experienceList: updatedList });
-      }
-      setEnhancingField(null);
-    }, 1200);
+export default function ResumeForm({ data, updateData, onOpenAiModal }) {
+  const handleAiEnhance = (fieldType, fieldId, currentText) => {
+    onOpenAiModal(fieldType, fieldId, currentText);
   };
 
   const addExperience = () => {
@@ -147,8 +125,7 @@ export default function ResumeForm({ data, updateData }) {
           value={data.summary} 
           onChange={e => updateData({...data, summary: e.target.value})} 
           placeholder="Briefly describe your professional background and key strengths..."
-          onEnhance={() => handleAiEnhance('summary')}
-          isEnhancing={enhancingField === 'summary'}
+          onEnhance={() => handleAiEnhance('summary', null, data.summary)}
         />
       </div>
 
@@ -190,8 +167,7 @@ export default function ResumeForm({ data, updateData }) {
                 value={exp.experience} 
                 onChange={e => updateExperience(exp.id, 'experience', e.target.value)} 
                 placeholder="• Developed X using Y resulting in Z...&#10;• Led team of..."
-                onEnhance={() => handleAiEnhance(`experience-${exp.id}`)}
-                isEnhancing={enhancingField === `experience-${exp.id}`}
+                onEnhance={() => handleAiEnhance('experience', exp.id, exp.experience)}
               />
             </div>
           ))}
