@@ -93,6 +93,27 @@ export default function ResumeForm({ data, updateData, onOpenAiModal }) {
     updateData({ ...data, experienceList: updatedList });
   };
 
+  const addEducation = () => {
+    updateData({
+      ...data,
+      educationList: [...(data.educationList || []), { id: Date.now(), institution: '', degree: '' }]
+    });
+  };
+
+  const removeEducation = (id) => {
+    updateData({
+      ...data,
+      educationList: (data.educationList || []).filter(ed => ed.id !== id)
+    });
+  };
+
+  const updateEducation = (id, field, value) => {
+    const updatedList = data.educationList.map(ed => 
+      ed.id === id ? { ...ed, [field]: value } : ed
+    );
+    updateData({ ...data, educationList: updatedList });
+  };
+
   const SectionTitle = ({ icon: Icon, title }) => (
     <h2 className="text-xl font-bold text-white mb-5 flex items-center gap-3 pb-3 border-b border-slate-800">
       <div className="bg-slate-800 p-1.5 rounded-md border border-slate-700">
@@ -176,10 +197,39 @@ export default function ResumeForm({ data, updateData, onOpenAiModal }) {
 
       {/* Education */}
       <div className="mb-10">
-        <SectionTitle icon={GraduationCap} title="Education" />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
-          <InputField label="Institution" value={data.education} onChange={e => updateData({...data, education: e.target.value})} placeholder="e.g. Stanford University" />
-          <InputField label="Degree / Field of Study" value={data.degree} onChange={e => updateData({...data, degree: e.target.value})} placeholder="e.g. B.S. Computer Science" />
+        <div className="flex justify-between items-center mb-5 border-b border-slate-800 pb-3">
+          <h2 className="text-xl font-bold text-white flex items-center gap-3">
+            <div className="bg-slate-800 p-1.5 rounded-md border border-slate-700">
+              <GraduationCap className="text-indigo-400 w-5 h-5" />
+            </div>
+            Education
+          </h2>
+          <button 
+            onClick={addEducation}
+            className="flex items-center gap-1.5 text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-md font-medium transition-colors"
+          >
+            <Plus size={14} /> Add Education
+          </button>
+        </div>
+        
+        <div className="space-y-4">
+          {(data.educationList || []).map((ed) => (
+            <div key={ed.id} className="bg-slate-800/20 border border-slate-700/30 p-5 rounded-xl relative group">
+              {data.educationList.length > 1 && (
+                <button 
+                  onClick={() => removeEducation(ed.id)}
+                  className="absolute top-3 right-3 p-1.5 bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white rounded-md transition-colors opacity-0 group-hover:opacity-100"
+                  title="Delete Education"
+                >
+                  <Trash2 size={16} />
+                </button>
+              )}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
+                <InputField label="Institution" value={ed.institution} onChange={e => updateEducation(ed.id, 'institution', e.target.value)} placeholder="e.g. Stanford University" />
+                <InputField label="Degree / Field of Study" value={ed.degree} onChange={e => updateEducation(ed.id, 'degree', e.target.value)} placeholder="e.g. B.S. Computer Science" />
+              </div>
+            </div>
+          ))}
         </div>
       </div>
       

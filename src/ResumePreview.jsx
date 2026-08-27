@@ -91,9 +91,19 @@ const ResumePreview = forwardRef(({ data }, ref) => {
             <h3 className="text-base font-bold uppercase tracking-widest text-slate-900 mb-3 border-b-2 border-indigo-200 pb-1.5">
               Education
             </h3>
-            <div>
-              <h4 className="font-bold text-slate-800 text-[13px] leading-tight mb-1">{data.degree || 'Degree Name'}</h4>
-              <p className="text-xs text-slate-600 leading-snug">{data.education || 'University Name'}</p>
+            <div className="flex flex-col gap-4">
+              {(data.educationList || []).map((ed, idx) => (
+                <div key={ed.id || idx}>
+                  <h4 className="font-bold text-slate-800 text-[13px] leading-tight mb-1">{ed.degree || 'Degree Name'}</h4>
+                  <p className="text-xs text-slate-600 leading-snug">{ed.institution || 'University Name'}</p>
+                </div>
+              ))}
+              {(!data.educationList || data.educationList.length === 0) && (
+                <div>
+                  <h4 className="font-bold text-slate-800 text-[13px] leading-tight mb-1">Degree Name</h4>
+                  <p className="text-xs text-slate-600 leading-snug">University Name</p>
+                </div>
+              )}
             </div>
           </div>
 

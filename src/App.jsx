@@ -15,8 +15,7 @@ function App() {
     phone: '',
     summary: '',
     experienceList: [{ id: Date.now(), company: '', duration: '', experience: '' }],
-    education: '',
-    degree: '',
+    educationList: [{ id: Date.now(), institution: '', degree: '' }],
     skills: ''
   });
 
