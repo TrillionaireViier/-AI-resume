@@ -54,12 +54,13 @@ export default function SavedResumesModal({ isOpen, onClose, currentResumeData, 
     setTimeout(() => setSavedSuccess(false), 2000);
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm('Are you sure you want to delete this saved resume?')) {
-      const updatedList = savedResumes.filter(r => r.id !== id);
-      localStorage.setItem('ai_resume_history', JSON.stringify(updatedList));
-      setSavedResumes(updatedList);
-    }
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+
+  const executeDelete = (id) => {
+    const updatedList = savedResumes.filter(r => r.id !== id);
+    localStorage.setItem('ai_resume_history', JSON.stringify(updatedList));
+    setSavedResumes(updatedList);
+    setConfirmDeleteId(null);
   };
 
   const handleExportJson = () => {
@@ -168,13 +169,30 @@ export default function SavedResumesModal({ isOpen, onClose, currentResumeData, 
                         <Download size={14} /> Load
                       </button>
                       
-                      <button 
-                        onClick={() => handleDelete(resume.id)}
-                        className="p-1.5 text-slate-400 hover:text-rose-400 bg-slate-700/50 hover:bg-rose-500/10 rounded-lg transition-colors border border-transparent hover:border-rose-500/20"
-                        title="Delete"
-                      >
-                        <Trash2 size={16} />
-                      </button>
+                      {confirmDeleteId === resume.id ? (
+                        <div className="flex gap-1.5 items-center">
+                          <button 
+                            onClick={() => executeDelete(resume.id)} 
+                            className="bg-rose-500 hover:bg-rose-600 text-white text-xs px-2.5 py-1.5 rounded-lg font-bold transition-colors"
+                          >
+                            Confirm
+                          </button>
+                          <button 
+                            onClick={() => setConfirmDeleteId(null)} 
+                            className="bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs px-2.5 py-1.5 rounded-lg font-medium transition-colors"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      ) : (
+                        <button 
+                          onClick={() => setConfirmDeleteId(resume.id)}
+                          className="p-1.5 text-slate-400 hover:text-rose-400 bg-slate-700/50 hover:bg-rose-500/10 rounded-lg transition-colors border border-transparent hover:border-rose-500/20"
+                          title="Delete"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      )}
                     </div>
                   </div>
                 ))}
