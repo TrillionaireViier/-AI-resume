@@ -25,7 +25,7 @@ export async function generateResumeContent(apiKey, prompt, contextType) {
   const response = await fetch(endpoint, {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${apiKey}`,
+      'Authorization': `Bearer ${apiKey.trim().split(/\s+/)[0]}`,
       'HTTP-Referer': window.location.origin, // required by OpenRouter
       'X-Title': 'AI Resume Builder', // optional, helps OpenRouter dashboard
       'Content-Type': 'application/json',
