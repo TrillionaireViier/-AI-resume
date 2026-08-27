@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import html2pdf from 'html2pdf.js';
+import { useReactToPrint } from 'react-to-print';
 import { FileDown, Sparkles } from 'lucide-react';
 import ResumeForm from './ResumeForm';
 import ResumePreview from './ResumePreview';
@@ -27,9 +27,8 @@ function App() {
     const updateScale = () => {
       if (containerRef.current) {
         const containerWidth = containerRef.current.clientWidth;
-        // 8.5 inches is exactly 816 pixels at 96 DPI
         const resumeWidth = 816;
-        const padding = 32; // 16px padding on each side
+        const padding = 32;
         
         if (containerWidth < resumeWidth + padding) {
           setPreviewScale((containerWidth - padding) / resumeWidth);
@@ -44,18 +43,10 @@ function App() {
     return () => window.removeEventListener('resize', updateScale);
   }, []);
 
-  const handleDownloadPdf = () => {
-    const element = printRef.current;
-    const opt = {
-      margin:       0,
-      filename:     `${resumeData.name ? resumeData.name.replace(/\s+/g, '_') : 'Resume'}.pdf`,
-      image:        { type: 'jpeg', quality: 1.0 },
-      html2canvas:  { scale: 3, useCORS: true, letterRendering: true },
-      jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
-    };
-
-    html2pdf().set(opt).from(element).save();
-  };
+  const handleDownloadPdf = useReactToPrint({
+    contentRef: printRef,
+    documentTitle: `${resumeData.name ? resumeData.name.replace(/\s+/g, '_') : 'Resume'}`,
+  });
 
   return (
     <div className="min-h-screen flex flex-col lg:h-screen lg:overflow-hidden font-sans bg-slate-900">
