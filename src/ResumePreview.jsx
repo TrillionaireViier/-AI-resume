@@ -57,22 +57,23 @@ const ResumePreview = forwardRef(({ data }, ref) => {
               <span className="w-3.5 h-3.5 bg-indigo-500 inline-block rounded-sm"></span> Experience
             </h3>
             
-            <div className="mb-5 relative pl-4 border-l-2 border-indigo-200">
-              <div className="absolute w-2.5 h-2.5 bg-indigo-500 rounded-full -left-[6px] top-1.5 border-2 border-white"></div>
-              <div className="flex justify-between items-start mb-0.5">
-                <div className="flex-1 pr-2">
-                  <h4 className="font-bold text-slate-900 text-[14px] leading-tight break-words">{data.company || 'Company Name'}</h4>
+            {(data.experienceList || []).map((exp, index) => (
+              <div key={exp.id || index} className="mb-5 relative pl-4 border-l-2 border-indigo-200">
+                <div className="absolute w-2.5 h-2.5 bg-indigo-500 rounded-full -left-[6px] top-1.5 border-2 border-white"></div>
+                <div className="flex justify-between items-start mb-0.5">
+                  <div className="flex-1 pr-2">
+                    <h4 className="font-bold text-slate-900 text-[14px] leading-tight break-words">{exp.company || 'Company Name'}</h4>
+                  </div>
+                  <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded tracking-wider uppercase whitespace-nowrap">{exp.duration || 'Date Range'}</span>
                 </div>
-                <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded tracking-wider uppercase whitespace-nowrap">{data.duration || 'Date Range'}</span>
+                <div className="text-xs font-medium text-slate-500 mb-1.5 italic">Role details</div>
+                <p className="text-[13px] leading-relaxed text-slate-700 whitespace-pre-wrap">
+                  {exp.experience || '• Contributed to key projects and delivered results.\n• Collaborated with cross-functional teams.'}
+                </p>
               </div>
-              <div className="text-xs font-medium text-slate-500 mb-1.5 italic">Previous Role</div>
-              <p className="text-[13px] leading-relaxed text-slate-700 whitespace-pre-wrap">
-                {data.experience || '• Contributed to key projects and delivered results.\n• Collaborated with cross-functional teams.'}
-              </p>
-            </div>
+            ))}
             
-            {/* Placeholder for visual layout depth if user hasn't added much */}
-            {!data.experience && (
+            {(!data.experienceList || data.experienceList.length === 0) && (
               <div className="mb-4 relative pl-4 border-l-2 border-slate-200">
                 <div className="absolute w-2.5 h-2.5 bg-slate-300 rounded-full -left-[6px] top-1.5 border-2 border-white"></div>
                 <h4 className="font-bold text-slate-400 text-[14px] mb-0.5">Previous Company</h4>

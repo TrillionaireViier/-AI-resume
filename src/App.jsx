@@ -11,9 +11,7 @@ function App() {
     email: '',
     phone: '',
     summary: '',
-    company: '',
-    duration: '',
-    experience: '',
+    experienceList: [{ id: Date.now(), company: '', duration: '', experience: '' }],
     education: '',
     degree: '',
     skills: ''

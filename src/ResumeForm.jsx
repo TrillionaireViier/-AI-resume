@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Briefcase, GraduationCap, Code, Wand2, CheckCircle2, Loader2, Sparkles } from 'lucide-react';
+import { User, Briefcase, GraduationCap, Code, Wand2, Loader2, Sparkles, Plus, Trash2 } from 'lucide-react';
 
 const InputField = ({ label, value, onChange, placeholder, type = "text" }) => (
   <div className="mb-4">
@@ -81,9 +81,38 @@ export default function ResumeForm({ data, updateData }) {
         experience: "• Spearheaded the development of a scalable cloud architecture, reducing operational costs by 30%.\n• Managed a cross-functional team of 10+ engineers to deliver a flagship product 2 months ahead of schedule.\n• Implemented robust CI/CD pipelines that accelerated deployment times by 40% while maintaining 99.9% uptime."
       };
       
-      updateData({ ...data, [field]: enhancements[field] });
+      if (field === 'summary') {
+        updateData({ ...data, summary: enhancements.summary });
+      } else if (field.startsWith('experience-')) {
+        const id = parseInt(field.split('-')[1]);
+        const updatedList = data.experienceList.map(exp => 
+          exp.id === id ? { ...exp, experience: enhancements.experience } : exp
+        );
+        updateData({ ...data, experienceList: updatedList });
+      }
       setEnhancingField(null);
     }, 1200);
+  };
+
+  const addExperience = () => {
+    updateData({
+      ...data,
+      experienceList: [...(data.experienceList || []), { id: Date.now(), company: '', duration: '', experience: '' }]
+    });
+  };
+
+  const removeExperience = (id) => {
+    updateData({
+      ...data,
+      experienceList: (data.experienceList || []).filter(exp => exp.id !== id)
+    });
+  };
+
+  const updateExperience = (id, field, value) => {
+    const updatedList = data.experienceList.map(exp => 
+      exp.id === id ? { ...exp, [field]: value } : exp
+    );
+    updateData({ ...data, experienceList: updatedList });
   };
 
   const SectionTitle = ({ icon: Icon, title }) => (
@@ -125,20 +154,47 @@ export default function ResumeForm({ data, updateData }) {
 
       {/* Experience */}
       <div className="mb-10">
-        <SectionTitle icon={Briefcase} title="Work Experience" />
-        <div className="bg-slate-800/20 border border-slate-700/30 p-5 rounded-xl">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
-            <InputField label="Company Name" value={data.company} onChange={e => updateData({...data, company: e.target.value})} placeholder="e.g. Tech Corp Inc." />
-            <InputField label="Duration" value={data.duration} onChange={e => updateData({...data, duration: e.target.value})} placeholder="e.g. Jan 2020 - Present" />
-          </div>
-          <TextAreaField 
-            label="Key Responsibilities & Achievements" 
-            value={data.experience} 
-            onChange={e => updateData({...data, experience: e.target.value})} 
-            placeholder="• Developed X using Y resulting in Z...&#10;• Led team of..."
-            onEnhance={() => handleAiEnhance('experience')}
-            isEnhancing={enhancingField === 'experience'}
-          />
+        <div className="flex justify-between items-center mb-5 border-b border-slate-800 pb-3">
+          <h2 className="text-xl font-bold text-white flex items-center gap-3">
+            <div className="bg-slate-800 p-1.5 rounded-md border border-slate-700">
+              <Briefcase className="text-indigo-400 w-5 h-5" />
+            </div>
+            Work Experience
+          </h2>
+          <button 
+            onClick={addExperience}
+            className="flex items-center gap-1.5 text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-md font-medium transition-colors"
+          >
+            <Plus size={14} /> Add Role
+          </button>
+        </div>
+        
+        <div className="space-y-4">
+          {(data.experienceList || []).map((exp, index) => (
+            <div key={exp.id} className="bg-slate-800/20 border border-slate-700/30 p-5 rounded-xl relative group">
+              {data.experienceList.length > 1 && (
+                <button 
+                  onClick={() => removeExperience(exp.id)}
+                  className="absolute top-3 right-3 p-1.5 bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white rounded-md transition-colors opacity-0 group-hover:opacity-100"
+                  title="Delete Experience"
+                >
+                  <Trash2 size={16} />
+                </button>
+              )}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
+                <InputField label="Company & Role" value={exp.company} onChange={e => updateExperience(exp.id, 'company', e.target.value)} placeholder="e.g. Senior Dev at Tech Corp" />
+                <InputField label="Duration" value={exp.duration} onChange={e => updateExperience(exp.id, 'duration', e.target.value)} placeholder="e.g. Jan 2020 - Present" />
+              </div>
+              <TextAreaField 
+                label="Key Responsibilities & Achievements" 
+                value={exp.experience} 
+                onChange={e => updateExperience(exp.id, 'experience', e.target.value)} 
+                placeholder="• Developed X using Y resulting in Z...&#10;• Led team of..."
+                onEnhance={() => handleAiEnhance(`experience-${exp.id}`)}
+                isEnhancing={enhancingField === `experience-${exp.id}`}
+              />
+            </div>
+          ))}
         </div>
       </div>
 
