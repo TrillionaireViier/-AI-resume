@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useReactToPrint } from 'react-to-print';
-import { FileDown, Sparkles, Settings, FolderHeart } from 'lucide-react';
+import { FileDown, Sparkles, Settings, FolderHeart, Trash2 } from 'lucide-react';
 import ResumeForm from './ResumeForm';
 import ResumePreview from './ResumePreview';
 import SettingsModal from './SettingsModal';
@@ -8,16 +8,45 @@ import AiGeneratorModal from './AiGeneratorModal';
 import SavedResumesModal from './SavedResumesModal';
 
 function App() {
-  const [resumeData, setResumeData] = useState({
-    name: '',
-    title: '',
-    email: '',
-    phone: '',
-    summary: '',
-    experienceList: [{ id: Date.now(), company: '', duration: '', experience: '' }],
-    educationList: [{ id: Date.now(), institution: '', degree: '' }],
-    skills: ''
+  const [resumeData, setResumeData] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ai_resume_draft');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      console.error("Failed to load draft:", e);
+    }
+    return {
+      name: '',
+      title: '',
+      email: '',
+      phone: '',
+      summary: '',
+      experienceList: [{ id: Date.now(), company: '', duration: '', experience: '' }],
+      educationList: [{ id: Date.now(), institution: '', degree: '' }],
+      skills: ''
+    };
   });
+
+  // Auto-save draft
+  useEffect(() => {
+    localStorage.setItem('ai_resume_draft', JSON.stringify(resumeData));
+  }, [resumeData]);
+
+  const handleClearDraft = () => {
+    if (window.confirm('Are you sure you want to clear your current progress?')) {
+      const emptyState = {
+        name: '',
+        title: '',
+        email: '',
+        phone: '',
+        summary: '',
+        experienceList: [{ id: Date.now(), company: '', duration: '', experience: '' }],
+        educationList: [{ id: Date.now(), institution: '', degree: '' }],
+        skills: ''
+      };
+      setResumeData(emptyState);
+    }
+  };
 
   const printRef = useRef();
   const containerRef = useRef();
@@ -96,6 +125,13 @@ function App() {
           >
             <FolderHeart className="w-4 h-4 text-indigo-400" />
             <span className="hidden sm:inline">My Resumes</span>
+          </button>
+          <button 
+            onClick={handleClearDraft}
+            className="p-2 text-slate-400 hover:text-rose-400 hover:bg-slate-800 rounded-lg transition-colors border border-transparent hover:border-rose-900/50"
+            title="Clear Draft"
+          >
+            <Trash2 className="w-5 h-5" />
           </button>
           <button 
             onClick={() => setIsSettingsOpen(true)}
