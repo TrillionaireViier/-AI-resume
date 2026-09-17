@@ -6,6 +6,7 @@ import ResumePreview from './ResumePreview';
 import SettingsModal from './SettingsModal';
 import AiGeneratorModal from './AiGeneratorModal';
 import SavedResumesModal from './SavedResumesModal';
+import LoginModal from './LoginModal';
 
 function App() {
   const [resumeData, setResumeData] = useState(() => {
@@ -56,6 +57,7 @@ function App() {
   const [apiKey, setApiKey] = useState('');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isSavedResumesOpen, setIsSavedResumesOpen] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [aiModalState, setAiModalState] = useState({ isOpen: false, fieldType: null, fieldId: null, currentText: '' });
 
   useEffect(() => {
@@ -118,6 +120,12 @@ function App() {
           </span>
         </div>
         <div className="flex items-center gap-3">
+          <button 
+            onClick={() => setIsLoginModalOpen(true)}
+            className="flex items-center gap-2 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 px-4 py-2 rounded-lg font-bold transition-all text-sm border border-indigo-500/20 shadow-[0_0_15px_rgba(99,102,241,0.15)]"
+          >
+            Sign In
+          </button>
           <button 
             onClick={() => setIsSavedResumesOpen(true)}
             className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white px-3 py-2 rounded-lg font-medium transition-all text-sm border border-slate-700/50"
@@ -195,6 +203,15 @@ function App() {
         onClose={() => setIsSavedResumesOpen(false)}
         currentResumeData={resumeData}
         onLoadResume={setResumeData}
+      />
+
+      <LoginModal 
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
+        onGoogleLogin={() => {
+          setIsLoginModalOpen(false);
+          alert("Firebase config is required to activate Google Sign-in. Please provide the keys!");
+        }}
       />
     </div>
   );
