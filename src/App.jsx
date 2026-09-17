@@ -33,7 +33,7 @@ function App() {
   }, [resumeData]);
 
   const handleClearDraft = () => {
-    if (window.confirm('Are you sure you want to clear your current progress?')) {
+    if (window.confirm('Ви впевнені, що хочете повністю очистити поточне резюме?')) {
       const emptyState = {
         name: '',
         title: '',
